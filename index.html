@@ -240,6 +240,12 @@ section{position:relative;z-index:1;padding-block:34px}
 .amt-wrap{min-width:0}
 .amt-wrap input{width:0;flex:1 1 0;min-width:0}
 .rate{overflow-wrap:anywhere}
+
+.tier{margin:-6px 0 0;color:var(--muted);font-size:14px;text-align:center}
+.hint{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 14px;background:var(--tint);border:1px solid var(--green);border-radius:14px;padding:12px 14px;font-weight:700;font-size:15px;line-height:1.6;animation:rise .5s var(--ease)}
+.hint span{flex:1 1 200px;text-align:center}
+.hint button{font:inherit;font-weight:700;font-size:14px;cursor:pointer;background:var(--green);color:var(--green-ink);border:0;border-radius:99px;padding:8px 18px;transition:transform .3s var(--ease)}
+.hint button:hover{transform:translateY(-2px)}
 </style>
 <script>document.documentElement.classList.add("js")</script>
 
@@ -309,12 +315,14 @@ section{position:relative;z-index:1;padding-block:34px}
         <button type="button" id="mRetail" aria-pressed="true" data-i18n="m_retail">تجزئة</button>
         <button type="button" id="mWhole" aria-pressed="false" data-i18n="m_whole">جملة</button>
       </div>
+      <p class="tier" id="tierNote"></p>
       <label for="amt" data-i18n="calc_l">المبلغ بالدينار الجزائري</label>
       <div class="amt-wrap">
         <input id="amt" type="text" inputmode="numeric" autocomplete="off" placeholder="10,000" dir="ltr">
         <span data-i18n="unit">دج</span>
       </div>
       <div class="res"><small data-i18n="calc_r">تحصل على نحو</small><div class="res-val" id="usd" aria-live="polite">$0.00</div></div>
+      <div class="hint" id="hint" hidden><span id="hintText"></span><button type="button" id="hintBtn"></button></div>
       <p class="rate" id="rateLine"></p>
     </div>
   </section>
@@ -380,7 +388,7 @@ section{position:relative;z-index:1;padding-block:34px}
       s1:"<b>تواصل:</b> أرسل لنا عبر الواتساب حتى نؤكد لك توفر المبلغ واستقبال المنصة، وتأخذ موعدا أو تحجز طلب توصيل.",
       s2:"<b>الالتقاء:</b> بعد الطلب، أو تنقل مندوب التوصيل إليك، وشحن المنصة المراد شحنها.",
       s3:"<b>دفع:</b> رسوم الشحن بكل سهولة.",
-      calc_h:"احسب مبلغك بالدولار", calc_l:"المبلغ بالدينار الجزائري", calc_r:"تحصل على نحو", m_retail:"تجزئة", m_whole:"جملة", unit:"دج", rate_t:"سعر الصرف", rate_u:"دج لكل 1$", upd_t:"آخر تحديث", calc_note:"الحساب تقريبي، ونؤكد لك السعر النهائي على واتساب.",
+      calc_h:"احسب مبلغك بالدولار", calc_l:"المبلغ بالدينار الجزائري", calc_r:"تحصل على نحو", m_retail:"تجزئة", m_whole:"جملة", unit:"دج", rate_t:"سعر الصرف", rate_u:"دج لكل 1$", upd_t:"آخر تحديث", calc_note:"الحساب تقريبي، ونؤكد لك السعر النهائي على واتساب.", tier_note:"سعر الجملة للمبالغ التي تبدأ من {min}$ فما فوق.", hint_w:"هذا المبلغ يعتبر جملة (من {min}$ فما فوق).", hint_wb:"الانتقال إلى الجملة", hint_r:"هذا المبلغ أقل من {min}$، فهو يعتبر تجزئة.", hint_rb:"الانتقال إلى التجزئة",
       faq_h:"أسئلة شائعة",
       q1:"ما المنصات التي تشحنونها؟", a1:"نتعامل مع بطاقات Binance وBybit وRedotPay الظاهرة في أعلى الصفحة.",
       q2:"هل يوجد توصيل؟", a2:"نعم، يصل مندوب التوصيل إلى باب منزلك، والتوصيل متوفر في العاصمة فقط. ويمكنك أيضا التنقل إلينا.",
@@ -400,7 +408,7 @@ section{position:relative;z-index:1;padding-block:34px}
       s1:"<b>Contact :</b> écrivez-nous sur WhatsApp pour confirmer la disponibilité du montant et la prise en charge de la plateforme, puis fixez un rendez-vous ou réservez une livraison.",
       s2:"<b>Rencontre :</b> après la commande, nous nous retrouvons ou le livreur se déplace chez vous, et la plateforme choisie est rechargée.",
       s3:"<b>Paiement :</b> réglez les frais de recharge en toute simplicité.",
-      calc_h:"Calculez votre montant en dollars", calc_l:"Montant en dinars algériens", calc_r:"Vous obtenez environ", m_retail:"Détail", m_whole:"Gros", unit:"DA", rate_t:"Taux", rate_u:"DA pour 1 $", upd_t:"Mis à jour le", calc_note:"Calcul indicatif : nous confirmons le prix final sur WhatsApp.",
+      calc_h:"Calculez votre montant en dollars", calc_l:"Montant en dinars algériens", calc_r:"Vous obtenez environ", m_retail:"Détail", m_whole:"Gros", unit:"DA", rate_t:"Taux", rate_u:"DA pour 1 $", upd_t:"Mis à jour le", calc_note:"Calcul indicatif : nous confirmons le prix final sur WhatsApp.", tier_note:"Le tarif de gros commence à partir de {min} $.", hint_w:"Ce montant relève du tarif de gros (à partir de {min} $).", hint_wb:"Passer au gros", hint_r:"Ce montant est inférieur à {min} $ : c'est le tarif détail.", hint_rb:"Passer au détail",
       faq_h:"Questions fréquentes",
       q1:"Quelles plateformes rechargez-vous ?", a1:"Nous travaillons avec les cartes Binance, Bybit et RedotPay affichées en haut de la page.",
       q2:"Y a-t-il une livraison ?", a2:"Oui, un livreur se rend à votre porte. La livraison est disponible uniquement à Alger. Vous pouvez aussi venir nous voir.",
@@ -512,6 +520,7 @@ section{position:relative;z-index:1;padding-block:34px}
   try{ mode=localStorage.getItem("dm_mode")==="wholesale"?"wholesale":"retail"; }catch(e){}
   var calcSec=document.getElementById("calc"), amt=document.getElementById("amt"), usdEl=document.getElementById("usd"), rateEl=document.getElementById("rateLine");
   var mR=document.getElementById("mRetail"), mW=document.getElementById("mWhole");
+  var tierEl=document.getElementById("tierNote"), hintEl=document.getElementById("hint"), hintTx=document.getElementById("hintText"), hintBtn=document.getElementById("hintBtn");
   function fmtDate(s){
     try{ var d=new Date(s+"T12:00:00"); if(isNaN(d)) return s;
       return d.toLocaleDateString(lang==="ar"?"ar-DZ-u-nu-latn":"fr-DZ",{day:"numeric",month:"long",year:"numeric"}); }catch(e){ return s; }
@@ -519,15 +528,22 @@ section{position:relative;z-index:1;padding-block:34px}
   function renderCalc(){
     if(!PRICES||!amt) return;
     var digits=(amt.value||"").replace(/\D/g,"").slice(0,10), n=parseInt(digits||"0",10), rate=PRICES[mode], d=T[lang];
-    usdEl.textContent="$"+(n/rate).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+    var usd=n/rate, min=PRICES.min, minTxt=min.toLocaleString("en-US");
+    usdEl.textContent="$"+usd.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
     mR.setAttribute("aria-pressed",mode==="retail"?"true":"false"); mW.setAttribute("aria-pressed",mode==="wholesale"?"true":"false");
-    rateEl.innerHTML=d.rate_t+" ("+(mode==="retail"?d.m_retail:d.m_whole)+"): <b>"+rate.toLocaleString("en-US")+"</b> "+d.rate_u+
-      (PRICES.updated?" · "+d.upd_t+" "+fmtDate(PRICES.updated):"")+"<br>"+d.calc_note;
+    tierEl.textContent=d.tier_note.replace("{min}",minTxt);
+    var toW=(n>0&&mode==="retail"&&usd>=min), toR=(n>0&&mode==="wholesale"&&usd<min);
+    hintEl.hidden=!(toW||toR);
+    if(toW||toR){
+      hintTx.textContent=(toW?d.hint_w:d.hint_r).replace("{min}",minTxt);
+      hintBtn.textContent=toW?d.hint_wb:d.hint_rb; hintBtn.setAttribute("data-to",toW?"wholesale":"retail");
+    }
+    rateEl.innerHTML=(PRICES.updated?d.upd_t+" "+fmtDate(PRICES.updated)+"<br>":"")+d.calc_note;
   }
   function applyPrices(j){
     var r=Number(j&&j.retail), w=Number(j&&j.wholesale);
     if(!(r>0)||!(w>0)){ if(calcSec) calcSec.hidden=true; return; }
-    PRICES={retail:r,wholesale:w,updated:String(j.updated||"")};
+    var mn=Number(j.wholesale_min_usd); PRICES={retail:r,wholesale:w,min:(mn>0?mn:500),updated:String(j.updated||"")};
     if(calcSec) calcSec.hidden=false; renderCalc();
   }
   if(calcSec){
@@ -538,6 +554,7 @@ section{position:relative;z-index:1;padding-block:34px}
     function setMode(m){ mode=m; try{ localStorage.setItem("dm_mode",m); }catch(e){} renderCalc(); }
     mR.addEventListener("click",function(){ setMode("retail"); });
     mW.addEventListener("click",function(){ setMode("wholesale"); });
+    hintBtn.addEventListener("click",function(){ setMode(hintBtn.getAttribute("data-to")==="wholesale"?"wholesale":"retail"); });
     try{
       fetch("prices.json?v="+Date.now(),{cache:"no-store"}).then(function(r){ if(!r.ok) throw 0; return r.json(); })
         .then(applyPrices).catch(function(){ calcSec.hidden=true; });
