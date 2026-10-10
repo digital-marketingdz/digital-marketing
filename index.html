@@ -11,12 +11,12 @@
 <meta property="og:locale" content="ar_DZ">
 <meta property="og:title" content="DIGITAL MARKETING">
 <meta property="og:description" content="يد بيد في العاصمة، حتى لباب دارك. شحن المنصات الرقمية مع توصيل إلى باب منزلك.">
-<meta property="og:url" content="https://dailysandouj-rgb.github.io/digital-marketing/">
-<meta property="og:image" content="https://dailysandouj-rgb.github.io/digital-marketing/og.jpg">
+<meta property="og:url" content="https://digital-marketingdz.github.io/digital-marketing/">
+<meta property="og:image" content="https://digital-marketingdz.github.io/digital-marketing/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://dailysandouj-rgb.github.io/digital-marketing/og.jpg">
+<meta name="twitter:image" content="https://digital-marketingdz.github.io/digital-marketing/og.jpg">
 <title>DIGITAL MARKETING</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -373,6 +373,8 @@ section{position:relative;z-index:1;padding-block:34px}
     <details class="faq"><summary data-i18n="q5">ما هي أوقات العمل؟</summary><div class="ans" data-i18n="a5">من الثامنة صباحا إلى التاسعة ليلا (21:00) بتوقيت الجزائر العاصمة.</div></details>
   </section>
 
+  <p class="legal reveal" id="waPriv" data-i18n="priv" hidden>عند الضغط على زر واتساب تُضاف إلى رسالتك معلومات عامة (نوع الجهاز، البلد التقريبي، استعمال VPN) ويمكنك حذفها قبل الإرسال.</p>
+
   <p class="legal reveal" data-i18n="legal">أسماء Binance وBybit وRedotPay وVisa وMastercard علامات تجارية لأصحابها، وتُعرض هنا لبيان نوع البطاقات فقط. هذه الخدمة مستقلة وغير تابعة لها رسميًا.</p>
 </div>
 
@@ -405,6 +407,7 @@ section{position:relative;z-index:1;padding-block:34px}
       q4:"كيف أدفع؟", a4:"بعد شحن المنصة تدفع رسوم الشحن بكل سهولة.",
       q5:"ما هي أوقات العمل؟", a5:"من الثامنة صباحا إلى التاسعة ليلا (21:00) بتوقيت الجزائر العاصمة.",
       legal:"أسماء Binance وBybit وRedotPay وVisa وMastercard علامات تجارية لأصحابها، وتُعرض هنا لبيان نوع البطاقات فقط. هذه الخدمة مستقلة وغير تابعة لها رسميًا.",
+      priv:"عند الضغط على زر واتساب تُضاف إلى رسالتك معلومات عامة (نوع الجهاز، البلد التقريبي، استعمال VPN) ويمكنك حذفها قبل الإرسال.",
       open:"متاح الآن · حتى 21:00", closed:"خارج الدوام · نعود على الساعة 08:00", btn:"FR"
     },
     fr:{
@@ -425,6 +428,7 @@ section{position:relative;z-index:1;padding-block:34px}
       q4:"Comment payer ?", a4:"Une fois la plateforme rechargée, vous réglez les frais de recharge en toute simplicité.",
       q5:"Quels sont les horaires ?", a5:"De 8h00 à 21h00, heure d'Alger.",
       legal:"Binance, Bybit, RedotPay, Visa et Mastercard sont des marques de leurs propriétaires, affichées ici uniquement pour indiquer les types de cartes. Ce service est indépendant et n'est pas affilié officiellement à ces entités.",
+      priv:"En cliquant sur WhatsApp, des informations générales (type d'appareil, pays approximatif, usage d'un VPN) sont ajoutées à votre message ; vous pouvez les supprimer avant l'envoi.",
       open:"Disponible maintenant · jusqu'à 21h00", closed:"Hors horaires · retour à 8h00", btn:"عربي"
     }
   };
@@ -591,6 +595,53 @@ section{position:relative;z-index:1;padding-block:34px}
         .then(applyPrices).catch(function(){ calcSec.hidden=true; });
     }catch(e){ calcSec.hidden=true; }
   }
+
+  /* WhatsApp: prefilled message with basic visitor info (only when whatsapp_number is set in prices.json) */
+  var waLinks=[].slice.call(document.querySelectorAll(".cta, .bar a")), waNum="", info=null;
+  function devType(){
+    var u=navigator.userAgent||"";
+    if(/iPhone|iPad|iPod/i.test(u)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1)) return "ios";
+    if(/Android/i.test(u)) return "android";
+    return "pc";
+  }
+  var WA={
+    ar:{h:"مرحبا، أريد شحن منصة.",pc:"الجهاز: كمبيوتر",android:"الجهاز: أندرويد",ios:"الجهاز: iOS",
+        dz:"الموقع: الجزائر",ot:"الموقع: خارج الجزائر",un:"الموقع: غير معروف",
+        vy:"VPN: نعم",vn:"VPN: لا",vu:"VPN: غير معروف"},
+    fr:{h:"Bonjour, je souhaite recharger une plateforme.",pc:"Appareil : ordinateur",android:"Appareil : Android",ios:"Appareil : iOS",
+        dz:"Lieu : Algérie",ot:"Lieu : hors d'Algérie",un:"Lieu : inconnu",
+        vy:"VPN : oui",vn:"VPN : non",vu:"VPN : inconnu"}
+  };
+  function updateWa(){
+    if(!waNum) return;
+    var w=WA[lang]||WA.ar, i=info||{};
+    var loc=i.country===undefined?w.un:(i.country==="DZ"?w.dz:w.ot);
+    var vpn=i.vpn===undefined?w.vu:(i.vpn?w.vy:w.vn);
+    var msg=[w.h,"",w[devType()],loc,vpn].join("\n");
+    var href="https://wa.me/"+waNum+"?text="+encodeURIComponent(msg);
+    waLinks.forEach(function(a){ a.href=href; });
+  }
+  var _setLang=setLang; setLang=function(l){ _setLang(l); updateWa(); };
+  function lookup(){
+    var ctl=("AbortController" in window)?new AbortController():null, to=setTimeout(function(){ if(ctl) ctl.abort(); },5000);
+    fetch("https://api.ipapi.is/",ctl?{signal:ctl.signal}:{}).then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(j){
+        clearTimeout(to);
+        var cc=j&&j.location&&j.location.country_code;
+        info={country:cc?String(cc).toUpperCase():undefined,
+              vpn:(j&&("is_vpn" in j))?!!(j.is_vpn||j.is_proxy||j.is_tor||j.is_datacenter):undefined};
+        updateWa();
+      }).catch(function(){ clearTimeout(to); });
+  }
+  try{
+    fetch("prices.json?v="+Date.now(),{cache:"no-store"}).then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(j){
+        var n=String((j&&j.whatsapp_number)||"").replace(/\D/g,"");
+        if(n.length<8) return;
+        waNum=n; var pv=document.getElementById("waPriv"); if(pv) pv.hidden=false;
+        updateWa(); lookup();
+      }).catch(function(){});
+  }catch(e){}
 
   /* still map when motion is reduced */
   if(reduce){ var sv=document.querySelector(".map svg"); if(sv&&sv.pauseAnimations) sv.pauseAnimations(); }
